@@ -372,3 +372,37 @@ link: https://editor.p5js.org/Luden-32/sketches/v7a-kt8UX
 
 
 ## Bitácora de reflexión
+1. **Diferencia entre `random()`  y `noise()`**
+
+La diferencia fundamental es que `random()`  genera valores completamente independientes entre si, mientras que `noise()` produce valores que están relacionados de forma suave y continua.
+
+Con `random()`  no hay memoria: cada número no tiene relación con el anterior. En cambio, el Ruido de Perlin da una sensación de aleatoriedad, pero en realidad sigue un patron continuo.
+
+Usaría `random()` cuando quiero caos, saltos brusco o comportamientos impredecibles, como partículas dispersándose o dediciones completamente al azar y usaría `noise()` cuando busco algo más orgánico y fluido como deformaciones suaves, movimiento natural o formas que evolucionan con el tiempo.
+
+1. **Distribución de probabilidad**
+
+Una distribución de probabilidad describe qué tan probable es que ocurra un valor dentro de un rango de posibilidades. No todos los valores tienen por qué tener la misma probabilidad de aparecer.
+
+Visualmente, una caminata aleatoria con distribución uniforme se ve más errática y dispersa, ya que todos los movimientos son igual de probables.
+
+En cambio, una caminata con distribución normal tiende a concentrarse alrededor de un punto central, con movimientos pequeños más frecuentes y saltos grandes más raros, lo que genera un movimiento más natural y controlado.
+
+1. **Papel de la aleatoriedad en el arte generativo**
+
+La aleatoriedad cumple varios roles en el arte generativo:
+
+1. Introduce variación, evitando que las obras se vean repetitivas o mecánicas.
+2. Permite la emergencia de resultados inesperados, donde el artista no controla cada detalle, sino que diseña un sistema que produce resultados únicos.
+3. Funciona como una herramienta expresiva, ya que distintos tipos de aleatoriedad transmiten sensaciones diferentes, como caos, fluidez o equilibrio.
+1. **Aleatoriedad en mi obra final (Actividad 07)**
+
+En mi obra final utilicé Ruido Perlin para deformar una forma central y limitar el movimiento de elementos secundarios dentro de esa forma. Esta elección fue adecuada porque buscaba un efecto orgánico y coherente, donde las deformaciones no fueran bruscas ni arbitrarias.
+
+El uso de `noise()` permitió que la forma y el movimiento evolucionaran de manera continua, generando una sensación de unidad visual y evitando el caos que habría producido un uso exclusivo de `random()`.
+
+1. **Caminata (walk) y Lévy flight**
+
+Una caminata en simulación es un proceso en el que un objeto se desplaza paso a paso, tomando decisiones de movimiento basadas en reglas probabilísticas. Cada nuevo paso depende del anterior, lo que genera trayectorias emergentes.
+
+La caminata tipo *Lévy flight* se caracteriza por combinar muchos pasos pequeños con saltos grandes ocasionales. Esto produce trayectorias más exploratorias, donde el agente puede permanecer en una zona por un tiempo y luego desplazarse abruptamente a otra, a diferencia de una caminata aleatoria clásica más uniforme.
