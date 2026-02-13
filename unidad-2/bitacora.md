@@ -135,6 +135,159 @@ class Mover {
 
 
 ### Actividad 10
+
+```jsx
+let suns = [];
+let particles = [];
+
+let totalSuns = 5;
+let particlesPerSun = 25;
+
+// ─── SOL DEL CURSOR ───
+let cursorSunRadius = 6;
+let cursorStrength = 1.4;
+let cursorRange = 180;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+
+  // Crear soles
+  for (let i = 0; i < totalSuns; i++) {
+    suns.push(new Sun(random(width), random(height)));
+  }
+
+  // Crear partículas orbitando
+  for (let sun of suns) {
+    for (let i = 0; i < particlesPerSun; i++) {
+      particles.push(new Particle(sun));
+    }
+  }
+}
+
+function draw() {
+  background(0);
+
+  let cursorSun = createVector(mouseX, mouseY);
+
+  // Dibujar sol del cursor (pequeño pero poderoso)
+  noStroke();
+  fill(253, 253, 150);
+  circle(cursorSun.x, cursorSun.y, cursorSunRadius * 2);
+
+  // Actualizar soles
+  for (let sun of suns) {
+    sun.update(cursorSun);
+    sun.show();
+  }
+
+  // Actualizar partículas
+  for (let p of particles) {
+    p.update(cursorSun);
+    p.show();
+  }
+}
+
+/* =========================
+          SUN
+========================= */
+class Sun {
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.mass = random(35, 60);
+    this.radius = this.mass * 0.3;
+    this.minOrbit = this.radius + 14;
+  }
+
+  update(cursorSun) {
+    // Repulsión suave del cursor
+    let force = p5.Vector.sub(this.pos, cursorSun);
+    let d = force.mag();
+
+    if (d < cursorRange) {
+      d = constrain(d, 30, cursorRange);
+      force.normalize();
+      force.mult(35 / d);
+      this.pos.add(force);
+    }
+  }
+
+  show() {
+    noStroke();
+    fill(255, 180);
+    circle(this.pos.x, this.pos.y, this.radius * 2);
+  }
+}
+
+/* =========================
+        PARTICLE
+========================= */
+class Particle {
+  constructor(sun) {
+    this.sun = sun;
+
+    let angle = random(TWO_PI);
+    let r = random(sun.minOrbit + 10, sun.minOrbit + 60);
+
+    this.pos = p5.Vector.fromAngle(angle).mult(r).add(sun.pos);
+    this.vel = p5.Vector.fromAngle(angle + HALF_PI).mult(random(1.2, 2));
+  }
+
+  update(cursorSun) {
+    let toSun = p5.Vector.sub(this.sun.pos, this.pos);
+    let dSun = toSun.mag();
+
+    // ─── ORBITA ESTABLE ───
+    if (dSun < this.sun.minOrbit) {
+      // empuje tangencial (evita colisión)
+      let tangent = createVector(-toSun.y, toSun.x);
+      tangent.normalize();
+      tangent.mult(0.6);
+      this.vel.add(tangent);
+    } else {
+      toSun.normalize();
+      toSun.mult(this.sun.mass / (dSun * 0.9));
+      this.vel.add(toSun);
+    }
+
+    // ─── INFLUENCIA DEL CURSOR (LIMITADA) ───
+    let toCursor = p5.Vector.sub(cursorSun, this.pos);
+    let dCursor = toCursor.mag();
+
+    if (dCursor < cursorRange) {
+      let influence = map(dCursor, 0, cursorRange, cursorStrength, 0);
+      toCursor.normalize();
+      toCursor.mult(influence);
+      this.vel.add(toCursor);
+    }
+
+    this.vel.limit(4);
+    this.pos.add(this.vel);
+    this.vel.mult(0.995);
+  }
+
+  show() {
+    noStroke();
+    fill(255, 120, 180);
+    circle(this.pos.x, this.pos.y, 3);
+  }
+}
+
+```
+
+> 
+> 
+> 
+> Mi obra es un sistema de soles y partículas que simula cómo funcionan las influencias.
+> Cada sol atrae partículas que giran a su alrededor y forman órbitas estables. Todo está en equilibrio… hasta que aparece otro sol.
+> 
+> El cursor soy yo: un sol más pequeño, pero más fuerte. No destruye el sistema, solo lo altera. Cuando me acerco, las partículas cambian su comportamiento, pierden su órbita original y se ven atraídas por una nueva fuerza.
+> 
+> La obra habla de cómo una presencia puede cambiar dinámicas ya establecidas sin necesidad de tocar nada directamente. Todo sigue moviéndose, pero ya no de la misma forma.
+> 
+
 https://editor.p5js.org/Luden-32/sketches/229ghFr4m
+<img width="923" height="852" alt="image" src="https://github.com/user-attachments/assets/9e5d7c37-497e-48f3-991b-7ac744da57f5" />
+
+
 
 
