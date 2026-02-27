@@ -213,3 +213,213 @@ class Mover {
 https://editor.p5js.org/Luden-32/sketches/ITrCM-MKY
 
 </aside>
+
+
+### Reflect
+
+**¿Que es el motion 101?**
+
+Motion 101 es una forma básica de entender cómo se mueve algo a partir de cuatro cosas clave: posición, velocidad, aceleración y fuerza. En programación, por ejemplo en p5.js, esto se ve muy directo usando vectores: en cada fotograma la velocidad se suma a la posición para que el objeto se mueva. Desde la física clásica, la idea es que las fuerzas generan aceleración, la aceleración modifica la velocidad y, como resultado, la velocidad cambia la posición del objeto en el espacio.
+
+<aside>
+🔗
+
+https://editor.p5js.org/Luden-32/sketches/NmPbjHTc6
+https://youtu.be/VewUU7mYzTk?si=X4ESOQ179GkLko52&t=1844
+<img width="879" height="567" alt="image" src="https://github.com/user-attachments/assets/5a311d75-649c-46a0-bc5e-e0785b44f7f2" />
+
+
+</aside>
+
+```jsx
+let stems = [];
+let windT = 0;
+
+// espiral (Motion 101 angular)
+let spiralRot = 0;
+let spiralVel = 0;
+let spiralAcc = 0;
+
+// mouse
+let prevMouse;
+
+function setup() {
+  createCanvas(700, 450);
+  noiseDetail(2, 0.5);
+
+  prevMouse = createVector(mouseX, mouseY);
+
+  let count = 6;
+  for (let i = 0; i < count; i++) {
+    let x = map(i, 0, count - 1, 100, width - 100);
+    stems.push(new Stem(x));
+  }
+}
+
+function draw() {
+  background(206, 213, 192);
+
+  // ================= MOUSE SPEED =================
+  let mouseNow = createVector(mouseX, mouseY);
+  let mouseVel = p5.Vector.sub(mouseNow, prevMouse);
+  let mouseSpeed = constrain(mouseVel.mag(), 0, 30);
+  prevMouse = mouseNow.copy();
+
+  drawRedSun();
+  drawSpiral(mouseSpeed);
+
+  for (let s of stems) {
+    s.applyForces(mouseSpeed);
+    s.update();
+    s.show();
+  }
+
+  windT += 0.01;
+}
+
+// ================= TALLO (MOVER) =================
+
+class Stem {
+  constructor(x) {
+    this.baseX = x;
+    this.h = random(height * 0.55, height * 0.8);
+    this.noiseOffset = random(1000);
+
+    // Motion 101
+    this.pos = createVector(0, 0); // desplazamiento lateral
+    this.vel = createVector(0, 0);
+    this.acc = createVector(0, 0);
+
+    // hoja
+    this.leafAngle = random(-PI / 10, PI / 10);
+    this.leafLength = random(45, 75);
+    this.leafWidth = random(12, 26);
+  }
+
+  applyForce(force) {
+    // Nature of Code
+    this.acc.add(force);
+  }
+
+  applyForces(mouseSpeed) {
+    // viento base (ruido)
+    let windStrength = map(
+      noise(windT + this.noiseOffset),
+      0, 1,
+      -0.04, 0.04
+    );
+    let wind = createVector(windStrength, 0);
+    this.applyForce(wind);
+
+    // mouse = más viento
+    if (mouseSpeed > 0) {
+      let mouseWind = createVector(mouseSpeed * 0.0006, 0);
+      this.applyForce(mouseWind);
+    }
+
+    // fuerza de retorno (tipo resorte)
+    let restore = createVector(-this.pos.x * 0.02, 0);
+    this.applyForce(restore);
+  }
+
+  update() {
+    // Motion 101 clásico
+    this.vel.add(this.acc);
+    this.vel.mult(0.95); // fricción
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+  }
+
+  show() {
+    stroke(120);
+    strokeWeight(2);
+    noFill();
+
+    let steps = 20;
+    beginShape();
+    for (let i = 0; i <= steps; i++) {
+      let y = map(i, 0, steps, height, height - this.h);
+      let bend = map(i, 0, steps, 0, this.pos.x * 120);
+      let n = noise(i * 0.2, this.noiseOffset);
+      let jitter = map(n, 0, 1, -4, 4);
+
+      vertex(this.baseX + bend + jitter, y);
+    }
+    endShape();
+
+    let tipX = this.baseX + this.pos.x * 120;
+    let tipY = height - this.h;
+
+    drawLeaf(
+      tipX,
+      tipY,
+      this.leafAngle + this.pos.x * 0.3,
+      this.leafLength,
+      this.leafWidth
+    );
+  }
+}
+
+// ================= HOJA =================
+
+function drawLeaf(x, y, angle, len, wid) {
+  push();
+  translate(x, y);
+  rotate(angle);
+
+  stroke(121, 122, 117);
+  strokeWeight(3);
+  fill(121, 122, 117);
+
+  beginShape();
+  vertex(0, 0);
+  vertex(-wid * 0.5 + noise(x) * 2, -len);
+  vertex(wid * 0.5 + noise(y) * 2, -len);
+  endShape(CLOSE);
+
+  pop();
+}
+
+// ================= CÍRCULO ROJO =================
+
+function drawRedSun() {
+  noStroke();
+  fill(180, 40, 30);
+  circle(width * 0.35, height * 0.55, 210);
+}
+
+// ================= ESPIRAL =================
+
+function drawSpiral(mouseSpeed) {
+  push();
+  translate(width * 0.65, height * 0.6);
+
+  // Motion 101 angular (igual al Mover)
+  spiralAcc += mouseSpeed * 0.0004;
+  spiralVel += spiralAcc;
+  spiralVel *= 0.96;
+  spiralRot += spiralVel;
+  spiralAcc = 0;
+
+  rotate(spiralRot);
+
+  noFill();
+  stroke(20);
+
+  let r = 6;
+  for (let a = 0; a < TWO_PI * 2; a += 0.12) {
+    let w = map(a, 0, TWO_PI * 2, 10, 1);
+    strokeWeight(w);
+
+    let x1 = cos(a) * r;
+    let y1 = sin(a) * r;
+    let x2 = cos(a + 0.12) * (r + 1);
+    let y2 = sin(a + 0.12) * (r + 1);
+
+    line(x1, y1, x2, y2);
+    r += 1;
+  }
+
+  pop();
+}
+```
