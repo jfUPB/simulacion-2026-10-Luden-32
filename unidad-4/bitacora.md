@@ -290,5 +290,17 @@ function windowResized() {
 > 
 
 
+# Reflect
+Todo el tema de fuerzas como la gravedad, el viento o la fricción, junto con conceptos como la aleatoriedad y el Perlin Noise, son la base de cómo se construye el movimiento en sistemas digitales.
 
+Por ejemplo, el movimiento no es simplemente cambiar una posición en pantalla. Hay una lógica detrás: las fuerzas afectan la aceleración, la aceleración modifica la velocidad, y la velocidad cambia la posición. Esa cadena es la que permite que algo se sienta natural. Si no se tiene en cuenta, todo se ve artificial.
+
+También entendí que no toda la “aleatoriedad” sirve igual. El random puro genera resultados caóticos, mientras que el Perlin Noise permite variaciones más suaves y orgánicas, lo cual es clave para cosas como animaciones, efectos visuales o comportamientos que buscan parecer naturales.
+
+En el contexto de mi carrera, esto se aplica directamente en áreas como el desarrollo de videojuegos, animación y efectos visuales. Desde cómo se mueve un personaje, hasta cómo se comporta el humo, el fuego o incluso una cámara, todo puede construirse a partir de estos principios.
+
+Al final, esto no es solo código, es una forma de simular comportamiento real dentro de sistemas digitales. Entenderlo bien marca la diferencia entre algo que simplemente funciona y algo que realmente se siente bien.
+
+
+<img width="741" height="954" alt="image" src="https://github.com/user-attachments/assets/22483f46-2277-40d3-9a23-0805c3a69020" />
 
